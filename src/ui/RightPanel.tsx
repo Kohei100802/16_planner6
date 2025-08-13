@@ -4,7 +4,7 @@ import { db, DayNote, Goal, Reminder } from '../shared/db'
 import { format } from 'date-fns'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
-import { Table } from 'dexie'
+import type { Table } from 'dexie'
 import { useAuth } from '../shared/auth'
 
 type Item = Goal | Reminder
