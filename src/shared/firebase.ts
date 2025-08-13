@@ -11,9 +11,16 @@ const firebaseConfig = {
 }
 
 export function initFirebase() {
+  const configured = Object.values(firebaseConfig).every(Boolean)
+  if (!configured) return false
   if (!getApps().length) {
     initializeApp(firebaseConfig)
   }
+  return true
+}
+
+export function isFirebaseConfigured() {
+  return Object.values(firebaseConfig).every(Boolean)
 }
 
 
