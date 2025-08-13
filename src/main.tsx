@@ -1,10 +1,23 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { AppShell } from './shell/AppShell'
+import { AuthGate } from './shell/AuthGate'
+
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: (
+      <AuthGate>
+        <AppShell />
+      </AuthGate>
+    ),
+  },
+])
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <App />
+    <RouterProvider router={router} />
   </StrictMode>,
 )
