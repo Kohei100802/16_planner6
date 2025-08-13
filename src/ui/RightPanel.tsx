@@ -5,30 +5,31 @@ import { format } from 'date-fns'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { Table } from 'dexie'
+import { useAuth } from '../shared/auth'
 
 type Item = Goal | Reminder
 
 function Section<T extends Item>({ title, table, date }: { title: string; table: Table<T, string>; date: string }) {
   const [items, setItems] = useState<T[]>([])
+  const { user } = useAuth()
 
   useEffect(() => {
     table
-      .where('date')
-      .equals(date)
+      .where({ date, userId: user?.uid ?? 'local' } as any)
       .sortBy('order')
       .then((rows) => setItems(rows as T[]))
-  }, [date, table])
+  }, [date, table, user])
 
   const add = async () => {
     const id = crypto.randomUUID()
-    await (table as any).put({ id, title: '', order: items.length, userId: 'local', date })
-    const rows = await (table as any).where('date').equals(date).sortBy('order')
+    await (table as any).put({ id, title: '', order: items.length, userId: user?.uid ?? 'local', date })
+    const rows = await (table as any).where({ date, userId: user?.uid ?? 'local' }).sortBy('order')
     setItems(rows)
   }
 
   const update = async (id: string, patch: Partial<T>) => {
     await (table as any).update(id, patch)
-    const rows = await (table as any).where('date').equals(date).sortBy('order')
+    const rows = await (table as any).where({ date, userId: user?.uid ?? 'local' }).sortBy('order')
     setItems(rows)
   }
 
@@ -55,15 +56,16 @@ function Section<T extends Item>({ title, table, date }: { title: string; table:
 export function RightPanel() {
   const date = useUIStore((s) => s.selectedDate)
   const [note, setNote] = useState<DayNote | null>(null)
+  const { user } = useAuth()
 
   useEffect(() => {
     const load = async () => {
       const existing = await db.dayNotes.get(date)
       if (existing) setNote(existing)
-      else setNote({ id: date, markdown: '', userId: 'local', updatedAt: Date.now() })
+      else setNote({ id: date, markdown: '', userId: user?.uid ?? 'local', updatedAt: Date.now() })
     }
     load()
-  }, [date])
+  }, [date, user])
 
   useEffect(() => {
     const handler = setTimeout(() => {

@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { onAuthStateChanged, getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
 import { initFirebase } from '../shared/firebase'
+import { useAuth } from '../shared/auth'
 
 type Props = {
   children: ReactNode
@@ -8,7 +9,7 @@ type Props = {
 
 export function AuthGate({ children }: Props) {
   const [ready, setReady] = useState(false)
-  const [user, setUser] = useState<{ uid: string; displayName?: string | null } | null>(null)
+  const { user, setUser } = useAuth()
 
   useEffect(() => {
     initFirebase()

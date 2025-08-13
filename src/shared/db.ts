@@ -27,7 +27,7 @@ export class PlannerDB extends Dexie {
 
   constructor() {
     super('planner-db')
-    this.version(1).stores({
+    this.version(2).stores({
       dayNotes: 'id, userId, updatedAt',
       goals: 'id, userId, date, order',
       reminders: 'id, userId, date, order',
